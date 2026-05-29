@@ -1,0 +1,65 @@
+.card {
+  min-height: 300px;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.totalValue {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--error);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.totalLabel {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.providerName {
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 70%;
+}
+
+.providerCount {
+  font-weight: 600;
+  color: var(--error);
+}
+
+.none {
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 8px 0;
+}

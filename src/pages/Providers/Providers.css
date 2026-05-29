@@ -317,6 +317,34 @@
   color: var(--error);
 }
 
+.register-error svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.register-error-text {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.register-error-dismiss {
+  background: none;
+  border: none;
+  color: var(--error);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  opacity: 0.7;
+  flex-shrink: 0;
+  font-family: var(--sans);
+}
+
+.register-error-dismiss:hover {
+  opacity: 1;
+}
+
 .register-success {
   display: flex;
   align-items: flex-start;

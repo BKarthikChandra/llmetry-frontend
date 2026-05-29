@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { getApiErrorMessage } from '../../utils/errorMessage';
+import { getAuthErrorMessage } from '../../utils/errorMessage';
 
 interface Props {
   onSwitchToSignup: () => void;
@@ -42,7 +42,7 @@ export function LoginForm({ onSwitchToSignup, onToast }: Props) {
       await login(email, password);
       navigate('/providers', { replace: true });
     } catch (err) {
-      onToast('error', getApiErrorMessage(err));
+      onToast('error', getAuthErrorMessage(err));
     } finally {
       setIsLoading(false);
     }

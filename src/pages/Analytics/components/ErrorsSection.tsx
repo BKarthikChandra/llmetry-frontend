@@ -1,0 +1,105 @@
+import type { ErrorsData } from '../../../types/analytics';
+import { AnalyticsCard } from './AnalyticsCard';
+import styles from './ErrorsSection.module.css';
+
+interface ErrorsSectionProps {
+  data: ErrorsData | null;
+  loading: boolean;
+  error: string | null;
+  onRetry: () => void;
+}
+
+interface BadgeInfo {
+  label: string;
+  bg: string;
+  color: string;
+}
+
+function getErrorBadge(errorMessage: string): BadgeInfo {
+  const msg = errorMessage.toLowerCase();
+  const codeMatch = msg.match(/\b([45]\d{2})\b/);
+  if (codeMatch) {
+    return {
+      label: codeMatch[1],
+      bg: 'rgba(239,68,68,0.18)',
+      color: codeMatch[1].startsWith('5') ? '#ef4444' : '#f97316',
+    };
+  }
+  if (msg.includes('quota') || msg.includes('rate limit') || msg.includes('ratelimit')) {
+    return { label: 'quota', bg: 'rgba(245,158,11,0.18)', color: '#f59e0b' };
+  }
+  if (msg.includes('timeout') || msg.includes('timed out')) {
+    return { label: 'timeout', bg: 'rgba(249,115,22,0.18)', color: '#f97316' };
+  }
+  if (msg.includes('auth') || msg.includes('unauthorized') || msg.includes('forbidden')) {
+    return { label: 'auth', bg: 'rgba(139,92,246,0.18)', color: '#8b5cf6' };
+  }
+  return { label: 'error', bg: 'rgba(107,114,128,0.15)', color: '#9ca3af' };
+}
+
+function formatRelativeTime(ts: string): string {
+  const diff = Date.now() - new Date(ts).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
+
+export function ErrorsSection({ data, loading, error, onRetry }: ErrorsSectionProps) {
+  return (
+    <AnalyticsCard
+      title="Recent errors"
+      loading={loading}
+      error={error}
+      onRetry={onRetry}
+      className={styles.card}
+    >
+      {!loading && !error && (!data || data.recentErrors.length === 0) ? (
+        <div className={styles.empty}>No recent errors</div>
+      ) : !loading && !error && data ? (
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th className={styles.th}>Provider</th>
+                <th className={styles.th}>Model</th>
+                <th className={styles.th}>Error</th>
+                <th className={`${styles.th} ${styles.thRight}`}>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.recentErrors.map((row, idx) => {
+                const badge = getErrorBadge(row.errorMessage);
+                return (
+                  <tr key={idx} className={styles.tr}>
+                    <td className={styles.td}>{row.provider}</td>
+                    <td className={`${styles.td} ${styles.tdMono}`}>{row.model}</td>
+                    <td className={styles.td}>
+                      <span
+                        className={styles.badge}
+                        style={{ background: badge.bg, color: badge.color }}
+                        title={row.errorMessage}
+                      >
+                        {badge.label}
+                      </span>
+                    </td>
+                    <td className={`${styles.td} ${styles.tdRight}`}>
+                      <span
+                        className={styles.time}
+                        title={new Date(row.createdAt).toLocaleString()}
+                      >
+                        {formatRelativeTime(row.createdAt)}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+    </AnalyticsCard>
+  );
+}

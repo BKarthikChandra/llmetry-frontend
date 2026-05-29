@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { getApiErrorMessage } from '../../utils/errorMessage';
+import { getAuthErrorMessage } from '../../utils/errorMessage';
 
 interface Props {
   onSwitchToLogin: () => void;
@@ -49,7 +49,7 @@ export function SignupForm({ onSwitchToLogin, onToast }: Props) {
       await signup(email, password);
       navigate('/providers', { replace: true });
     } catch (err) {
-      onToast('error', getApiErrorMessage(err, 'Account creation failed. Please try again.'));
+      onToast('error', getAuthErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
