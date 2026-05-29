@@ -1,0 +1,174 @@
+/* ── Design tokens — dark mode default ──────────────────── */
+:root {
+  /* Base backgrounds */
+  --bg: #0c0e14;
+  --bg-base: #0c0e14;
+  --bg-surface: #13151e;
+  --bg-elevated: #191c27;
+  --bg-card: #1c1f2e;
+  --bg-input: #111420;
+
+  /* Borders */
+  --border: #252836;
+  --border-subtle: #1d2030;
+
+  /* Text */
+  --text: #8b90a7;
+  --text-h: #e8eaf2;
+  --text-primary: #e8eaf2;
+  --text-secondary: #8b90a7;
+  --text-muted: #4a5168;
+
+  /* Accent (purple) */
+  --accent: #7c3aed;
+  --accent-hover: #6d28d9;
+  --accent-light: #a78bfa;
+  --accent-bg: rgba(124, 58, 237, 0.12);
+  --accent-border: rgba(124, 58, 237, 0.3);
+
+  /* Status */
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.12);
+  --success-border: rgba(16, 185, 129, 0.25);
+  --error: #ef4444;
+  --error-bg: rgba(239, 68, 68, 0.12);
+
+  /* Shadows */
+  --shadow:
+    rgba(0, 0, 0, 0.5) 0 10px 20px -4px,
+    rgba(0, 0, 0, 0.3) 0 4px 8px -2px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+
+  /* Layout */
+  --sidebar-width: 220px;
+
+  /* Border radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* Typography */
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+  /* Base */
+  font: 15px/150% var(--sans);
+  letter-spacing: 0.1px;
+  color-scheme: dark;
+  color: var(--text);
+  background: var(--bg-base);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Light theme overrides ──────────────────────────────── */
+[data-theme='light'] {
+  --bg: #ffffff;
+  --bg-base: #f4f5f9;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f1f3f9;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+
+  --border: #e2e5ee;
+  --border-subtle: #eceef5;
+
+  --text: #6b7280;
+  --text-h: #111827;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+
+  --accent: #7c3aed;
+  --accent-hover: #6d28d9;
+  --accent-light: #7c3aed;
+  --accent-bg: rgba(124, 58, 237, 0.08);
+  --accent-border: rgba(124, 58, 237, 0.25);
+
+  --success: #059669;
+  --success-bg: rgba(5, 150, 105, 0.08);
+  --success-border: rgba(5, 150, 105, 0.25);
+  --error: #dc2626;
+  --error-bg: rgba(220, 38, 38, 0.08);
+
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 20px -4px,
+    rgba(0, 0, 0, 0.06) 0 4px 8px -2px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  color-scheme: light;
+}
+
+/* ── Reset & base ───────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-base);
+  color: var(--text);
+  font-family: var(--sans);
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--heading);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--accent-light);
+  text-decoration: none;
+}
+
+/* ── Login toast dark/light colour corrections ──────────── */
+.login-toast.success {
+  color: #4ade80;
+}
+.login-toast.error {
+  color: #f87171;
+}
+
+[data-theme='light'] .login-toast.success {
+  color: #16a34a;
+}
+[data-theme='light'] .login-toast.error {
+  color: #dc2626;
+}
+
+/* ── Scrollbar (webkit) ─────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
