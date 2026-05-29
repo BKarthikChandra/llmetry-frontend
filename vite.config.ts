@@ -8,8 +8,20 @@ export default defineConfig({
     proxy: {
       '/auth': { target: 'http://localhost:3000', changeOrigin: true },
       '/user': { target: 'http://localhost:3000', changeOrigin: true },
-      '/chat': { target: 'http://localhost:3000', changeOrigin: true },
-      '/analytics': { target: 'http://localhost:3000', changeOrigin: true },
+      '/chat': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        bypass(req) {
+          if (req.headers.accept?.includes('text/html')) return '/index.html';
+        },
+      },
+      '/analytics': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        bypass(req) {
+          if (req.headers.accept?.includes('text/html')) return '/index.html';
+        },
+      },
     },
   },
 })

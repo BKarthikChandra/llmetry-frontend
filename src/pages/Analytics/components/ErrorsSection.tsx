@@ -57,7 +57,11 @@ export function ErrorsSection({ data, loading, error, onRetry }: ErrorsSectionPr
       className={styles.card}
     >
       {!loading && !error && (!data || data.recentErrors.length === 0) ? (
-        <div className={styles.empty}>No recent errors</div>
+        <div className={styles.empty}>
+          <span className={styles.emptyCheck}>✓</span>
+          <span className={styles.emptyTitle}>No errors detected</span>
+          <span className={styles.emptySub}>System operating normally</span>
+        </div>
       ) : !loading && !error && data ? (
         <div className={styles.tableWrapper}>
           <table className={styles.table}>
