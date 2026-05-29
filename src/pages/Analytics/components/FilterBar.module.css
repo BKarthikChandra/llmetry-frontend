@@ -37,6 +37,10 @@
   cursor: not-allowed;
 }
 
+.pillDim {
+  opacity: 0.45;
+}
+
 .dateRange {
   display: flex;
   align-items: center;

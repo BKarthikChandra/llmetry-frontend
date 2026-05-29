@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { getRegisteredProviders } from '../../../services/providerService';
-import type { RegisteredProvider } from '../../../types/provider';
+import { useCallback, useEffect, useState } from 'react';
+import { getRegisteredProviders, getModels } from '../../../services/providerService';
+import type { RegisteredProvider, ProviderModel } from '../../../types/provider';
 import type { AnalyticsFilters } from '../../../types/analytics';
 import styles from './FilterBar.module.css';
 
@@ -40,15 +40,38 @@ interface FilterBarProps {
 
 export function FilterBar({ filters, onChange, loading }: FilterBarProps) {
   const [providers, setProviders] = useState<RegisteredProvider[]>([]);
+  const [models, setModels] = useState<ProviderModel[]>([]);
+  const [modelsLoading, setModelsLoading] = useState(false);
   const [preset, setPreset] = useState<DatePreset>(() => inferPreset(filters.from, filters.to));
 
   useEffect(() => {
     getRegisteredProviders().then(setProviders).catch(() => {});
   }, []);
 
+  const loadModels = useCallback((providerId: number) => {
+    setModelsLoading(true);
+    getModels(providerId)
+      .then(setModels)
+      .catch(() => setModels([]))
+      .finally(() => setModelsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    if (filters.providerId) loadModels(filters.providerId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleProviderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const raw = e.target.value;
-    onChange({ ...filters, providerId: raw ? Number(raw) : undefined });
+    const providerId = raw ? Number(raw) : undefined;
+    setModels([]);
+    onChange({ ...filters, providerId, providerModelId: undefined });
+    if (providerId) loadModels(providerId);
+  };
+
+  const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const raw = e.target.value;
+    onChange({ ...filters, providerModelId: raw ? Number(raw) : undefined });
   };
 
   const handlePresetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -79,6 +102,20 @@ export function FilterBar({ filters, onChange, loading }: FilterBarProps) {
         {providers.map((p) => (
           <option key={p.id} value={p.id}>
             {p.displayName}
+          </option>
+        ))}
+      </select>
+
+      <select
+        className={`${styles.pill} ${!filters.providerId ? styles.pillDim : ''}`}
+        value={filters.providerModelId ?? ''}
+        onChange={handleModelChange}
+        disabled={loading || !filters.providerId || modelsLoading}
+      >
+        <option value="">{modelsLoading ? 'Loading…' : 'All models'}</option>
+        {models.map((m) => (
+          <option key={m.id} value={m.id}>
+            {m.model}
           </option>
         ))}
       </select>
