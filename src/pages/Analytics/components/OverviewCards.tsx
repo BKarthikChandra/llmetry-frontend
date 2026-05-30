@@ -72,9 +72,16 @@ export function OverviewCards({ data, loading, error, onRetry }: OverviewCardsPr
       <div className={styles.card}>
         <span className={styles.label}>Total tokens</span>
         <span className={styles.value}>{fmtK(data.totalTokens)}</span>
-        <span className={styles.tokenDetail}>
-          {fmtK(data.totalInputTokens)} in · {fmtK(data.totalOutputTokens)} out
-        </span>
+        <div className={styles.tokenBreakdown}>
+          <span className={styles.tokenRow}>
+            <span className={styles.tokenLabel}>Input tokens</span>
+            <span className={styles.tokenValue}>{fmtK(data.totalInputTokens)}</span>
+          </span>
+          <span className={styles.tokenRow}>
+            <span className={styles.tokenLabel}>Output tokens</span>
+            <span className={styles.tokenValue}>{fmtK(data.totalOutputTokens)}</span>
+          </span>
+        </div>
       </div>
     </div>
   );
