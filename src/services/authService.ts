@@ -30,5 +30,5 @@ export const createUser = (payload: AuthPayload) =>
 export const getCurrentUser = () =>
   api.get<User>('/auth/me').then((r) => r.data);
 
-export const resetPassword = (payload: { currentPassword: string; newPassword: string }) =>
+export const resetPassword = (payload: { currentPassword: string; newPassword: string; confirmPassword: string }) =>
   api.patch('/auth/reset-password', payload).then((r) => r.data);

@@ -26,7 +26,7 @@ export function ProfilePage() {
     setPwLoading(true);
     setPwStatus(null);
     try {
-      await resetPassword({ currentPassword: pwForm.currentPassword, newPassword: pwForm.newPassword });
+      await resetPassword({ currentPassword: pwForm.currentPassword, newPassword: pwForm.newPassword, confirmPassword: pwForm.confirmPassword });
       setPwStatus({ type: 'success', message: 'Password updated successfully.' });
       setPwForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (err) {

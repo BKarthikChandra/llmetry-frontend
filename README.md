@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+LLMetry Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React and TypeScript dashboard for monitoring LLM provider usage covering multi-provider management, a chat interface, and observability analytics.
 
-Currently, two official plugins are available:
+Live demo: https://llmetry-frontend-1.onrender.com/login
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Demo credentials: demo@llmetry.com and demo@123
 
-## React Compiler
+Note: The backend is on Render's free tier and may take around 30 seconds on the first request due to cold start.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
+Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+React 19, Vite 8, TypeScript, React Router v7, Axios, Recharts, CSS Modules
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Authentication with JWT-based login and sign-up.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Provider Management to browse the LLM provider catalog and register API keys.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Model Management to list and add models per provider with a default model option.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Chat Interface with multi-session support, provider and model selection, and markdown rendering.
+
+Analytics Dashboard with date-range and provider filters showing request metrics, throughput, latency, comparisons, and error logs.
+
+
+Routes
+
+/login is public and handles login and sign-up.
+
+/chat, /providers, /analytics, and /profile are all protected and require a valid JWT.
+
+Unauthenticated users are redirected to /login.
+
+
+Running Locally
+
+Prerequisites: Node.js 18 or higher.
+
+Install dependencies with npm install, then start the dev server with npm run dev.
+
+The app will be available at http://localhost:5173.
+
+Set the environment variable VITE_API_BASE_URL to your backend URL before building, for example http://localhost:5000.
+
+
+Running With Docker
+
+Prerequisites: Docker and Docker Compose.
+
+Run docker compose up --build to build and start the app.
+
+To pass the API URL inline, run VITE_API_BASE_URL=https://api.example.com docker compose up --build.
+
+The app will be available at http://localhost:5173.
