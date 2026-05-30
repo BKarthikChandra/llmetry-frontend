@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../hooks/useAuth';
 import { resetPassword } from '../../services/authService';
-import { getErrorMessage } from '../../utils/errorMessage';
+import { getApiErrorMessage } from '../../utils/errorMessage';
 import './Profile.css';
 
 export function ProfilePage() {
@@ -30,7 +30,7 @@ export function ProfilePage() {
       setPwStatus({ type: 'success', message: 'Password updated successfully.' });
       setPwForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (err) {
-      setPwStatus({ type: 'error', message: getErrorMessage(err) });
+      setPwStatus({ type: 'error', message: getApiErrorMessage(err) });
     } finally {
       setPwLoading(false);
     }
