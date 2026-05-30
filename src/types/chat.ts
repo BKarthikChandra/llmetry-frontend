@@ -1,7 +1,8 @@
 export interface ChatSummary {
   chatId: number;
-  createdAt: string;
+  createdOn: string;
   title: string | null;
+  lastActivityAt: string;
 }
 
 export interface ChatMessage {

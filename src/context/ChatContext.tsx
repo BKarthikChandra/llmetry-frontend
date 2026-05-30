@@ -31,6 +31,7 @@ interface ChatContextValue {
   setSelectedProvider: (id: number | null) => void;
   setSelectedModel: (id: number | null) => void;
   send: (text: string) => Promise<void>;
+  deleteChat: (chatId: number) => Promise<void>;
   dismissError: () => void;
 }
 
@@ -163,6 +164,20 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     [selectedModelId, activeChatId, isSending, refreshChats],
   );
 
+  const deleteChat = useCallback(async (chatId: number) => {
+    try {
+      await chatService.deleteChat(chatId);
+      setChatList((prev) => prev.filter((c) => c.chatId !== chatId));
+      if (activeChatId === chatId) {
+        setActiveChatId(null);
+        setMessages([]);
+        setError(null);
+      }
+    } catch (err) {
+      setError(getApiErrorMessage(err, 'Failed to delete chat.'));
+    }
+  }, [activeChatId]);
+
   const dismissError = useCallback(() => setError(null), []);
 
   return (
@@ -185,6 +200,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setSelectedProvider,
         setSelectedModel,
         send,
+        deleteChat,
         dismissError,
       }}
     >

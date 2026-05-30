@@ -13,7 +13,11 @@ function formatRelativeDate(iso: string): string {
 }
 
 export function ChatSidebar() {
-  const { chatList, activeChatId, isLoadingChats, selectChat, startNewChat } = useChat();
+  const { chatList, activeChatId, isLoadingChats, selectChat, startNewChat, deleteChat } = useChat();
+
+  const sortedChats = [...chatList].sort(
+    (a, b) => new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime(),
+  );
 
   return (
     <aside className="chat-sidebar">
@@ -28,22 +32,33 @@ export function ChatSidebar() {
         {isLoadingChats && (
           <div className="chat-sidebar-placeholder">Loading...</div>
         )}
-        {!isLoadingChats && chatList.length === 0 && (
+        {!isLoadingChats && sortedChats.length === 0 && (
           <div className="chat-sidebar-placeholder">No conversations yet</div>
         )}
-        {chatList.map((chat) => (
-          <button
+        {sortedChats.map((chat) => (
+          <div
             key={chat.chatId}
             className={`chat-sidebar-item${activeChatId === chat.chatId ? ' active' : ''}`}
-            onClick={() => selectChat(chat.chatId)}
           >
-            <span className="chat-sidebar-item-title">
-              {chat.title ?? 'New conversation'}
-            </span>
-            <span className="chat-sidebar-item-date">
-              {formatRelativeDate(chat.createdAt)}
-            </span>
-          </button>
+            <button
+              className="chat-sidebar-item-select"
+              onClick={() => selectChat(chat.chatId)}
+            >
+              <span className="chat-sidebar-item-title">
+                {chat.title ?? 'New conversation'}
+              </span>
+              <span className="chat-sidebar-item-date">
+                {formatRelativeDate(chat.lastActivityAt)}
+              </span>
+            </button>
+            <button
+              className="chat-sidebar-item-delete"
+              onClick={() => deleteChat(chat.chatId)}
+              title="Delete chat"
+            >
+              <TrashIcon />
+            </button>
+          </div>
         ))}
       </div>
     </aside>
@@ -55,6 +70,18 @@ function PlusIcon() {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
       <line x1={12} y1={5} x2={12} y2={19} />
       <line x1={5} y1={12} x2={19} y2={12} />
+    </svg>
+  );
+}
+
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6l-1 14H6L5 6" />
+      <path d="M10 11v6" />
+      <path d="M14 11v6" />
+      <path d="M9 6V4h6v2" />
     </svg>
   );
 }

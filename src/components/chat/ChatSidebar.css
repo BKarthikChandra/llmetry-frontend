@@ -65,15 +65,10 @@
 .chat-sidebar-item {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  padding: 9px 10px;
-  border: none;
+  flex-direction: row;
+  align-items: center;
   border-radius: var(--radius-sm);
   background: transparent;
-  cursor: pointer;
-  text-align: left;
   transition: background 0.12s;
 }
 .chat-sidebar-item:hover {
@@ -81,6 +76,20 @@
 }
 .chat-sidebar-item.active {
   background: var(--accent-bg);
+}
+
+.chat-sidebar-item-select {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 9px 6px 9px 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
 }
 
 .chat-sidebar-item-title {
@@ -100,4 +109,32 @@
 .chat-sidebar-item-date {
   font-size: 11px;
   color: var(--text-muted);
+}
+
+.chat-sidebar-item-delete {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s, background 0.12s, color 0.12s;
+}
+.chat-sidebar-item:hover .chat-sidebar-item-delete {
+  opacity: 1;
+}
+.chat-sidebar-item-delete:hover {
+  background: var(--error, #ef4444);
+  color: #fff;
+}
+.chat-sidebar-item-delete svg {
+  width: 13px;
+  height: 13px;
 }

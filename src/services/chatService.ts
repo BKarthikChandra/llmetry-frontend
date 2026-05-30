@@ -15,3 +15,6 @@ export const sendMessage = (modelId: number, message: string, chatId?: number) =
       chatId != null ? { params: { chatId } } : undefined,
     )
     .then((r) => r.data);
+
+export const deleteChat = (chatId: number) =>
+  api.delete(`/chat/${chatId}`).then((r) => r.data);
