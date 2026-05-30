@@ -81,20 +81,24 @@ export function ErrorsSection({ data, loading, error, onRetry }: ErrorsSectionPr
                     <td className={styles.td}>{row.provider}</td>
                     <td className={`${styles.td} ${styles.tdMono}`}>{row.model}</td>
                     <td className={styles.td}>
-                      <span
-                        className={styles.badge}
-                        style={{ background: badge.bg, color: badge.color }}
-                        title={row.errorMessage}
-                      >
-                        {badge.label}
-                      </span>
+                      <div className={styles.errorCell}>
+                        <span
+                          className={styles.badge}
+                          style={{ background: badge.bg, color: badge.color }}
+                        >
+                          {badge.label}
+                        </span>
+                        <span className={styles.errorMsg} title={row.errorMessage}>
+                          {row.errorMessage}
+                        </span>
+                      </div>
                     </td>
                     <td className={`${styles.td} ${styles.tdRight}`}>
                       <span
                         className={styles.time}
-                        title={new Date(row.createdAt).toLocaleString()}
+                        title={new Date(row.createdOn).toLocaleString()}
                       >
-                        {formatRelativeTime(row.createdAt)}
+                        {formatRelativeTime(row.createdOn)}
                       </span>
                     </td>
                   </tr>

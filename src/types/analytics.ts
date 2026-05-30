@@ -54,7 +54,7 @@ export interface RecentError {
   provider: string;
   model: string;
   errorMessage: string;
-  createdAt: string;
+  createdOn: string;
 }
 
 export interface ErrorsData {

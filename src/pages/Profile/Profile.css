@@ -144,6 +144,25 @@
   cursor: not-allowed;
 }
 
+.profile-status {
+  font-size: 13px;
+  margin: 0;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+}
+
+.profile-status--success {
+  color: var(--success);
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+}
+
+.profile-status--error {
+  color: var(--error);
+  background: var(--error-bg, color-mix(in srgb, var(--error) 10%, transparent));
+  border: 1px solid color-mix(in srgb, var(--error) 30%, transparent);
+}
+
 /* ── Theme options ──────────────────────────────────────── */
 .theme-options {
   display: flex;

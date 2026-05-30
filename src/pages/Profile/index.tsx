@@ -1,10 +1,40 @@
+import { useState } from 'react';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../hooks/useAuth';
+import { resetPassword } from '../../services/authService';
+import { getErrorMessage } from '../../utils/errorMessage';
 import './Profile.css';
 
 export function ProfilePage() {
   const { theme, setTheme } = useTheme();
   const { user } = useAuth();
+
+  const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [pwStatus, setPwStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [pwLoading, setPwLoading] = useState(false);
+
+  async function handlePasswordSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (pwForm.newPassword !== pwForm.confirmPassword) {
+      setPwStatus({ type: 'error', message: 'New passwords do not match.' });
+      return;
+    }
+    if (pwForm.newPassword.length < 6) {
+      setPwStatus({ type: 'error', message: 'New password must be at least 6 characters.' });
+      return;
+    }
+    setPwLoading(true);
+    setPwStatus(null);
+    try {
+      await resetPassword({ currentPassword: pwForm.currentPassword, newPassword: pwForm.newPassword });
+      setPwStatus({ type: 'success', message: 'Password updated successfully.' });
+      setPwForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (err) {
+      setPwStatus({ type: 'error', message: getErrorMessage(err) });
+    } finally {
+      setPwLoading(false);
+    }
+  }
 
   return (
     <div className="profile-page">
@@ -31,9 +61,8 @@ export function ProfilePage() {
         <section className="profile-card">
           <div className="profile-card-header">
             <h2 className="profile-card-title">Password</h2>
-            <span className="profile-badge">API coming soon</span>
           </div>
-          <div className="profile-card-body">
+          <form className="profile-card-body" onSubmit={handlePasswordSubmit}>
             <div className="profile-field">
               <label className="profile-label" htmlFor="current-password">Current password</label>
               <input
@@ -41,7 +70,10 @@ export function ProfilePage() {
                 type="password"
                 className="profile-input"
                 placeholder="••••••••"
-                disabled
+                value={pwForm.currentPassword}
+                onChange={(e) => setPwForm((f) => ({ ...f, currentPassword: e.target.value }))}
+                disabled={pwLoading}
+                required
               />
             </div>
             <div className="profile-field">
@@ -51,7 +83,10 @@ export function ProfilePage() {
                 type="password"
                 className="profile-input"
                 placeholder="Min. 6 characters"
-                disabled
+                value={pwForm.newPassword}
+                onChange={(e) => setPwForm((f) => ({ ...f, newPassword: e.target.value }))}
+                disabled={pwLoading}
+                required
               />
             </div>
             <div className="profile-field">
@@ -61,11 +96,23 @@ export function ProfilePage() {
                 type="password"
                 className="profile-input"
                 placeholder="Re-enter new password"
-                disabled
+                value={pwForm.confirmPassword}
+                onChange={(e) => setPwForm((f) => ({ ...f, confirmPassword: e.target.value }))}
+                disabled={pwLoading}
+                required
               />
             </div>
-            <button className="profile-btn" disabled>Update password</button>
-          </div>
+            {pwStatus && (
+              <p className={`profile-status profile-status--${pwStatus.type}`}>{pwStatus.message}</p>
+            )}
+            <button
+              type="submit"
+              className="profile-btn"
+              disabled={pwLoading || !pwForm.currentPassword || !pwForm.newPassword || !pwForm.confirmPassword}
+            >
+              {pwLoading ? 'Updating…' : 'Update password'}
+            </button>
+          </form>
         </section>
 
         {/* Theme */}
