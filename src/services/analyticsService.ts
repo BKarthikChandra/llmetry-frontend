@@ -7,11 +7,12 @@ import type {
   ComparisonItem,
   ErrorsData,
 } from '../types/analytics';
+import { getLocalTimezone } from '../utils/dateTime';
 
 type QueryParams = Record<string, string | number | undefined>;
 
 function buildParams(filters: Partial<AnalyticsFilters>): QueryParams {
-  const p: QueryParams = {};
+  const p: QueryParams = { timezone: getLocalTimezone() };
   if (filters.providerId !== undefined) p.providerId = filters.providerId;
   if (filters.providerModelId !== undefined) p.providerModelId = filters.providerModelId;
   if (filters.from) p.from = filters.from;
@@ -22,36 +23,51 @@ function buildParams(filters: Partial<AnalyticsFilters>): QueryParams {
 }
 
 export function fetchOverview(filters: AnalyticsFilters, signal?: AbortSignal) {
-  const { interval: _interval, comparisonType: _ct, ...rest } = filters;
+  const { providerId, providerModelId, from, to } = filters;
   return api
-    .get<OverviewData>('/analytics/overview', { params: buildParams(rest), signal })
+    .get<OverviewData>('/analytics/overview', {
+      params: buildParams({ providerId, providerModelId, from, to }),
+      signal,
+    })
     .then((r) => r.data);
 }
 
 export function fetchThroughput(filters: AnalyticsFilters, signal?: AbortSignal) {
-  const { comparisonType: _ct, ...rest } = filters;
+  const { providerId, providerModelId, from, to, interval } = filters;
   return api
-    .get<ThroughputBucket[]>('/analytics/throughput', { params: buildParams(rest), signal })
+    .get<ThroughputBucket[]>('/analytics/throughput', {
+      params: buildParams({ providerId, providerModelId, from, to, interval }),
+      signal,
+    })
     .then((r) => r.data);
 }
 
 export function fetchLatency(filters: AnalyticsFilters, signal?: AbortSignal) {
-  const { comparisonType: _ct, ...rest } = filters;
+  const { providerId, providerModelId, from, to, interval } = filters;
   return api
-    .get<LatencyBucket[]>('/analytics/latency', { params: buildParams(rest), signal })
+    .get<LatencyBucket[]>('/analytics/latency', {
+      params: buildParams({ providerId, providerModelId, from, to, interval }),
+      signal,
+    })
     .then((r) => r.data);
 }
 
 export function fetchComparison(filters: AnalyticsFilters, signal?: AbortSignal) {
-  const { providerModelId: _pmid, interval: _i, ...rest } = filters;
+  const { providerId, from, to, comparisonType } = filters;
   return api
-    .get<ComparisonItem[]>('/analytics/comparison', { params: buildParams(rest), signal })
+    .get<ComparisonItem[]>('/analytics/comparison', {
+      params: buildParams({ providerId, from, to, comparisonType }),
+      signal,
+    })
     .then((r) => r.data);
 }
 
 export function fetchErrors(filters: AnalyticsFilters, signal?: AbortSignal) {
-  const { interval: _i, comparisonType: _ct, ...rest } = filters;
+  const { providerId, providerModelId, from, to } = filters;
   return api
-    .get<ErrorsData>('/analytics/errors', { params: buildParams(rest), signal })
+    .get<ErrorsData>('/analytics/errors', {
+      params: buildParams({ providerId, providerModelId, from, to }),
+      signal,
+    })
     .then((r) => r.data);
 }

@@ -1,4 +1,5 @@
 import type { ErrorsData } from '../../../types/analytics';
+import { formatUtcDateTimeToLocal, formatUtcRelativeTime } from '../../../utils/dateTime';
 import { AnalyticsCard } from './AnalyticsCard';
 import styles from './ErrorsSection.module.css';
 
@@ -37,20 +38,11 @@ function getErrorBadge(errorMessage: string): BadgeInfo {
   return { label: 'error', bg: 'rgba(107,114,128,0.15)', color: '#9ca3af' };
 }
 
-function formatRelativeTime(ts: string): string {
-  const diff = Date.now() - new Date(ts).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
-}
-
 export function ErrorsSection({ data, loading, error, onRetry }: ErrorsSectionProps) {
   return (
     <AnalyticsCard
       title="Recent errors"
+      subtitle={data && data.totalErrors > 0 ? `${data.totalErrors} total` : undefined}
       loading={loading}
       error={error}
       onRetry={onRetry}
@@ -65,10 +57,14 @@ export function ErrorsSection({ data, loading, error, onRetry }: ErrorsSectionPr
       ) : !loading && !error && data ? (
         <div className={styles.tableWrapper}>
           <table className={styles.table}>
+            <colgroup>
+              <col className={styles.colSource} />
+              <col className={styles.colError} />
+              <col className={styles.colTime} />
+            </colgroup>
             <thead>
               <tr>
-                <th className={styles.th}>Provider</th>
-                <th className={styles.th}>Model</th>
+                <th className={styles.th}>Source</th>
                 <th className={styles.th}>Error</th>
                 <th className={`${styles.th} ${styles.thRight}`}>Time</th>
               </tr>
@@ -78,8 +74,12 @@ export function ErrorsSection({ data, loading, error, onRetry }: ErrorsSectionPr
                 const badge = getErrorBadge(row.errorMessage);
                 return (
                   <tr key={idx} className={styles.tr}>
-                    <td className={styles.td}>{row.provider}</td>
-                    <td className={`${styles.td} ${styles.tdMono}`}>{row.model}</td>
+                    <td className={styles.td}>
+                      <div className={styles.sourceCell}>
+                        <span className={styles.providerName}>{row.provider}</span>
+                        <span className={styles.modelName} title={row.model}>{row.model}</span>
+                      </div>
+                    </td>
                     <td className={styles.td}>
                       <div className={styles.errorCell}>
                         <span
@@ -96,9 +96,9 @@ export function ErrorsSection({ data, loading, error, onRetry }: ErrorsSectionPr
                     <td className={`${styles.td} ${styles.tdRight}`}>
                       <span
                         className={styles.time}
-                        title={new Date(row.createdOn).toLocaleString()}
+                        title={formatUtcDateTimeToLocal(row.createdOn)}
                       >
-                        {formatRelativeTime(row.createdOn)}
+                        {formatUtcRelativeTime(row.createdOn)}
                       </span>
                     </td>
                   </tr>

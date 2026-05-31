@@ -11,6 +11,7 @@ import * as chatService from '../services/chatService';
 import { sendMessageStream } from '../services/chatService';
 import * as providerService from '../services/providerService';
 import { getApiErrorMessage } from '../utils/errorMessage';
+import { nowUtcIso } from '../utils/dateTime';
 import type { ChatSummary, ChatMessage } from '../types/chat';
 import type { ProviderModel } from '../types/provider';
 
@@ -130,7 +131,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         chatId: activeChatId ?? 0,
         sender: 'user',
         content: text,
-        createdAt: new Date().toISOString(),
+        createdAt: nowUtcIso(),
         providerModelId: selectedModelId,
       };
 
@@ -150,7 +151,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           chatId: data.chatId,
           sender: 'ai',
           content: data.response,
-          createdAt: new Date().toISOString(),
+          createdAt: nowUtcIso(),
           providerModelId: selectedModelId,
         };
 
@@ -182,7 +183,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       chatId: activeChatId ?? -1,
       sender: 'user',
       content: trimmed,
-      createdAt: new Date().toISOString(),
+      createdAt: nowUtcIso(),
       providerModelId: selectedModelId,
     };
     const tempAiMsg: ChatMessage = {
@@ -190,7 +191,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       chatId: activeChatId ?? -1,
       sender: 'ai',
       content: '',
-      createdAt: new Date().toISOString(),
+      createdAt: nowUtcIso(),
       providerModelId: selectedModelId,
     };
 

@@ -2,6 +2,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { getRegisteredProviders, getModels } from '../../../services/providerService';
 import type { RegisteredProvider, ProviderModel } from '../../../types/provider';
 import type { AnalyticsFilters } from '../../../types/analytics';
+import {
+  addLocalDays,
+  daysBetweenDateInputs,
+  getLocalDateInputValue,
+} from '../../../utils/dateTime';
 import styles from './FilterBar.module.css';
 
 type DatePreset = '7d' | '30d' | '90d' | 'custom';
@@ -16,16 +21,14 @@ const PRESET_LABELS: Record<DatePreset, string> = {
 function computeDateRange(preset: Exclude<DatePreset, 'custom'>): { from: string; to: string } {
   const now = new Date();
   const days = preset === '7d' ? 7 : preset === '30d' ? 30 : 90;
-  const from = new Date(now.getTime() - days * 86400000).toISOString().split('T')[0];
-  const to = now.toISOString().split('T')[0];
+  const from = getLocalDateInputValue(addLocalDays(now, -days));
+  const to = getLocalDateInputValue(now);
   return { from, to };
 }
 
 function inferPreset(from?: string, to?: string): DatePreset {
   if (!from || !to) return '7d';
-  const diffDays = Math.round(
-    (new Date(to).getTime() - new Date(from).getTime()) / 86400000,
-  );
+  const diffDays = daysBetweenDateInputs(from, to);
   if (diffDays === 7) return '7d';
   if (diffDays === 30) return '30d';
   if (diffDays === 90) return '90d';

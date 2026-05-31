@@ -20,14 +20,15 @@ import { ThroughputChart } from './components/ThroughputChart';
 import { LatencyChart } from './components/LatencyChart';
 import { ComparisonChart } from './components/ComparisonChart';
 import { ErrorsSection } from './components/ErrorsSection';
+import { addLocalDays, getLocalDateInputValue } from '../../utils/dateTime';
 import styles from './Analytics.module.css';
 
 const STORAGE_KEY = 'llmetry_analytics_filters';
 
 function getDefaultFilters(): AnalyticsFilters {
   const now = new Date();
-  const to = now.toISOString().split('T')[0];
-  const from = new Date(now.getTime() - 7 * 86400000).toISOString().split('T')[0];
+  const to = getLocalDateInputValue(now);
+  const from = getLocalDateInputValue(addLocalDays(now, -7));
   return { interval: 'day', comparisonType: 'provider', from, to };
 }
 

@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { LatencyBucket } from '../../../types/analytics';
+import { formatDateInputToLocal, formatUtcDateToLocal } from '../../../utils/dateTime';
 import { AnalyticsCard } from './AnalyticsCard';
 import styles from './LatencyChart.module.css';
 
@@ -20,10 +21,8 @@ interface LatencyChartProps {
 
 function formatBucket(bucket: unknown) {
   const s = String(bucket ?? '');
-  const d = new Date(s);
-  return isNaN(d.getTime())
-    ? s
-    : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return formatDateInputToLocal(s);
+  return formatUtcDateToLocal(s);
 }
 
 export function LatencyChart({ data, loading, error, onRetry }: LatencyChartProps) {

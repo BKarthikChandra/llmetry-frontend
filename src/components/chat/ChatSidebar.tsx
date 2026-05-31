@@ -1,22 +1,12 @@
 import { useChat } from '../../context/ChatContext';
+import { formatUtcDateTimeToLocal, formatUtcRelativeDate, sortUtcDesc } from '../../utils/dateTime';
 import './ChatSidebar.css';
-
-function formatRelativeDate(iso: string): string {
-  const date = new Date(iso);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-}
 
 export function ChatSidebar() {
   const { chatList, activeChatId, isLoadingChats, selectChat, startNewChat, deleteChat } = useChat();
 
   const sortedChats = [...chatList].sort(
-    (a, b) => new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime(),
+    (a, b) => sortUtcDesc(a.lastActivityAt, b.lastActivityAt),
   );
 
   return (
@@ -47,8 +37,11 @@ export function ChatSidebar() {
               <span className="chat-sidebar-item-title">
                 {chat.title ?? 'New conversation'}
               </span>
-              <span className="chat-sidebar-item-date">
-                {formatRelativeDate(chat.lastActivityAt)}
+              <span
+                className="chat-sidebar-item-date"
+                title={formatUtcDateTimeToLocal(chat.lastActivityAt)}
+              >
+                {formatUtcRelativeDate(chat.lastActivityAt)}
               </span>
             </button>
             <button

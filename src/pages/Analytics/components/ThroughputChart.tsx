@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { ThroughputBucket } from '../../../types/analytics';
+import { formatDateInputToLocal, formatUtcDateToLocal } from '../../../utils/dateTime';
 import { AnalyticsCard } from './AnalyticsCard';
 import styles from './ThroughputChart.module.css';
 
@@ -20,10 +21,8 @@ interface ThroughputChartProps {
 
 function formatBucket(bucket: unknown) {
   const s = String(bucket ?? '');
-  const d = new Date(s);
-  return isNaN(d.getTime())
-    ? s
-    : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return formatDateInputToLocal(s);
+  return formatUtcDateToLocal(s);
 }
 
 export function ThroughputChart({ data, loading, error, onRetry }: ThroughputChartProps) {

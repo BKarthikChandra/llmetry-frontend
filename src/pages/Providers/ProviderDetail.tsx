@@ -1,4 +1,5 @@
 import { useProviders } from '../../context/ProviderContext';
+import { formatUtcDateToLocal } from '../../utils/dateTime';
 import { ProviderIcon } from './ProviderIcon';
 import { RegisterForm } from './RegisterForm';
 import { ModelsSection } from './ModelsSection';
@@ -74,15 +75,11 @@ export function ProviderDetail() {
 }
 
 function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  } catch {
-    return iso;
-  }
+  return formatUtcDateToLocal(iso, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 }
 
 function GridIcon() {
