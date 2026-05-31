@@ -1,3 +1,4 @@
+import { useState, type ImgHTMLAttributes } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -49,6 +50,31 @@ interface Props {
   content: string;
 }
 
+function MarkdownImage({ src, alt, ...props }: ImgHTMLAttributes<HTMLImageElement>) {
+  const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+
+  return (
+    <span className={`md-image-frame ${status === 'loaded' ? 'loaded' : ''}`}>
+      {status === 'loading' && (
+        <span className="md-image-loading" aria-label="Loading image">
+          <span className="md-image-spinner" aria-hidden="true" />
+        </span>
+      )}
+      {status === 'error' && <span className="md-image-error">Image failed to load</span>}
+      {src && (
+        <img
+          {...props}
+          src={src}
+          alt={alt ?? ''}
+          loading="lazy"
+          onLoad={() => setStatus('loaded')}
+          onError={() => setStatus('error')}
+        />
+      )}
+    </span>
+  );
+}
+
 export function MarkdownMessage({ content }: Props) {
   const { theme } = useTheme();
   const codeStyle = theme === 'dark' ? vscDarkPlus : vs;
@@ -96,6 +122,9 @@ export function MarkdownMessage({ content }: Props) {
                 {children}
               </a>
             );
+          },
+          img({ src, alt, ...props }) {
+            return <MarkdownImage {...props} src={src} alt={alt} />;
           },
         }}
       >

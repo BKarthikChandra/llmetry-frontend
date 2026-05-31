@@ -3,7 +3,7 @@ import { useChat } from '../../context/ChatContext';
 import './MessageInput.css';
 
 export function MessageInput() {
-  const { send, isSending, selectedModelId, error, dismissError } = useChat();
+  const { sendStream, isSending, isStreaming, selectedModelId, error, dismissError } = useChat();
   const [text, setText] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -21,14 +21,16 @@ export function MessageInput() {
     }
   }
 
+  const isBusy = isSending || isStreaming;
+
   async function handleSend() {
     const trimmed = text.trim();
-    if (!trimmed || isSending || !selectedModelId) return;
+    if (!trimmed || isBusy || !selectedModelId) return;
     setText('');
-    await send(trimmed);
+    await sendStream(trimmed);
   }
 
-  const canSend = !!selectedModelId && !isSending && text.trim().length > 0;
+  const canSend = !!selectedModelId && !isBusy && text.trim().length > 0;
 
   return (
     <div className="msg-input-area">
@@ -52,7 +54,7 @@ export function MessageInput() {
               ? 'Message… (Shift+Enter for new line)'
               : 'Select a provider and model to start chatting'
           }
-          disabled={!selectedModelId || isSending}
+          disabled={!selectedModelId || isBusy}
           rows={1}
         />
         <button

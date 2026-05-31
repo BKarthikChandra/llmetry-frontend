@@ -55,3 +55,35 @@
   color: var(--text-primary);
   border-radius: var(--radius-md) var(--radius-md) var(--radius-md) 4px;
 }
+
+.msg-bubble.msg-streaming {
+  position: relative;
+  overflow-wrap: anywhere;
+}
+
+.msg-thinking-dot {
+  width: 9px;
+  height: 9px;
+  margin-top: 11px;
+  border-radius: 50%;
+  background: var(--accent-light);
+  box-shadow: 0 0 0 1px var(--accent-border);
+  animation: msg-thinking-pulse 1s ease-in-out infinite;
+}
+
+.streaming-content {
+  display: inline-block;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@keyframes msg-thinking-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}

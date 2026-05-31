@@ -3,13 +3,15 @@ import { useChat } from '../../context/ChatContext';
 import { MessageBubble } from './MessageBubble';
 import './MessageList.css';
 
+const STREAMING_MSG_ID = -1;
+
 export function MessageList() {
-  const { messages, isSending, isLoadingMessages, selectedModelId } = useChat();
+  const { messages, isSending, isStreaming, isLoadingMessages, selectedModelId } = useChat();
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages.length, isSending]);
+  }, [messages, isSending, isStreaming]);
 
   if (isLoadingMessages) {
     return (
@@ -40,16 +42,16 @@ export function MessageList() {
     <div className="msg-list">
       <div className="msg-list-inner">
         {messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} />
+          <MessageBubble
+            key={msg.id}
+            message={msg}
+            isStreaming={msg.id === STREAMING_MSG_ID}
+          />
         ))}
-        {isSending && (
+        {isSending && !isStreaming && (
           <div className="msg-wrapper ai">
             <div className="msg-avatar" aria-hidden="true">AI</div>
-            <div className="msg-bubble ai msg-thinking">
-              <span className="thinking-dot" />
-              <span className="thinking-dot" />
-              <span className="thinking-dot" />
-            </div>
+            <span className="msg-thinking-dot" aria-label="AI is thinking" />
           </div>
         )}
         <div ref={bottomRef} />

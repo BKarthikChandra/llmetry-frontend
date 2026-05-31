@@ -22,7 +22,7 @@ Provider Management to browse the LLM provider catalog and register API keys.
 
 Model Management to list and add models per provider with a default model option.
 
-Chat Interface with multi-session support, provider and model selection, and markdown rendering.
+Chat Interface with multi-session support, provider and model selection, streamed markdown responses, a subtle AI thinking indicator, and image loading states.
 
 Analytics Dashboard with date-range and provider filters showing request metrics, throughput, latency, comparisons, and error logs.
 

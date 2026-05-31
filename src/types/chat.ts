@@ -18,3 +18,19 @@ export interface SendMessageResponse {
   response: string;
   chatId: number;
 }
+
+export interface StreamDeltaPayload {
+  chunk: string;
+}
+
+export interface StreamDonePayload {
+  chatId: number;
+  inputTokens: number;
+  outputTokens: number;
+  totalTokens: number;
+  latencyMs: number;
+}
+
+export interface StreamErrorPayload {
+  message: string;
+}

@@ -8,10 +8,13 @@ import {
 } from 'react';
 import { AuthContext } from './AuthContext';
 import * as chatService from '../services/chatService';
+import { sendMessageStream } from '../services/chatService';
 import * as providerService from '../services/providerService';
 import { getApiErrorMessage } from '../utils/errorMessage';
 import type { ChatSummary, ChatMessage } from '../types/chat';
 import type { ProviderModel } from '../types/provider';
+
+const STREAMING_MSG_ID = -1;
 
 interface ChatContextValue {
   chatList: ChatSummary[];
@@ -24,6 +27,7 @@ interface ChatContextValue {
   isLoadingMessages: boolean;
   isLoadingModels: boolean;
   isSending: boolean;
+  isStreaming: boolean;
   error: string | null;
   refreshChats: () => Promise<void>;
   selectChat: (chatId: number) => Promise<void>;
@@ -31,6 +35,7 @@ interface ChatContextValue {
   setSelectedProvider: (id: number | null) => void;
   setSelectedModel: (id: number | null) => void;
   send: (text: string) => Promise<void>;
+  sendStream: (text: string) => Promise<void>;
   deleteChat: (chatId: number) => Promise<void>;
   dismissError: () => void;
 }
@@ -56,6 +61,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isLoadingModels, setIsLoadingModels] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const refreshChats = useCallback(async () => {
@@ -164,6 +170,81 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     [selectedModelId, activeChatId, isSending, refreshChats],
   );
 
+  const sendStream = useCallback(async (text: string) => {
+    if (!selectedModelId || isSending || isStreaming) return;
+
+    const trimmed = text.trim();
+    if (!trimmed) return;
+
+    const tempUserId = -Date.now();
+    const tempUserMsg: ChatMessage = {
+      id: tempUserId,
+      chatId: activeChatId ?? -1,
+      sender: 'user',
+      content: trimmed,
+      createdAt: new Date().toISOString(),
+      providerModelId: selectedModelId,
+    };
+    const tempAiMsg: ChatMessage = {
+      id: STREAMING_MSG_ID,
+      chatId: activeChatId ?? -1,
+      sender: 'ai',
+      content: '',
+      createdAt: new Date().toISOString(),
+      providerModelId: selectedModelId,
+    };
+
+    setMessages((prev) => [...prev, tempUserMsg, tempAiMsg]);
+    setIsStreaming(true);
+    setError(null);
+
+    try {
+      await sendMessageStream(
+        selectedModelId,
+        trimmed,
+        {
+          onChunk: (chunk) => {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === STREAMING_MSG_ID
+                  ? { ...m, content: (m.content ?? '') + chunk }
+                  : m,
+              ),
+            );
+          },
+          onDone: (payload) => {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === STREAMING_MSG_ID
+                  ? { ...m, id: Date.now(), chatId: payload.chatId }
+                  : m,
+              ),
+            );
+            setIsStreaming(false);
+            if (activeChatId == null) {
+              setActiveChatId(payload.chatId);
+              void refreshChats();
+            }
+          },
+          onError: (payload) => {
+            setError(payload.message);
+            setIsStreaming(false);
+            setMessages((prev) =>
+              prev.filter((m) => m.id !== STREAMING_MSG_ID && m.id !== tempUserId),
+            );
+          },
+        },
+        activeChatId ?? undefined,
+      );
+    } catch (err) {
+      setError((err as Error).message);
+      setIsStreaming(false);
+      setMessages((prev) =>
+        prev.filter((m) => m.id !== STREAMING_MSG_ID && m.id !== tempUserId),
+      );
+    }
+  }, [selectedModelId, activeChatId, isSending, isStreaming, refreshChats]);
+
   const deleteChat = useCallback(async (chatId: number) => {
     try {
       await chatService.deleteChat(chatId);
@@ -193,6 +274,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         isLoadingMessages,
         isLoadingModels,
         isSending,
+        isStreaming,
         error,
         refreshChats,
         selectChat,
@@ -200,6 +282,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setSelectedProvider,
         setSelectedModel,
         send,
+        sendStream,
         deleteChat,
         dismissError,
       }}
