@@ -2,13 +2,6 @@ LLMetry Frontend
 
 A React and TypeScript dashboard for monitoring LLM provider usage covering multi-provider management, a chat interface, and observability analytics.
 
-Live demo: https://llmetry-frontend-1.onrender.com/login
-
-Demo credentials: demo@llmetry.com and demo@123
-
-Note: The backend is on Render's free tier and may take around 30 seconds on the first request due to cold start.
-
-
 Tech Stack
 
 React 19, Vite 8, TypeScript, React Router v7, Axios, Recharts, CSS Modules
